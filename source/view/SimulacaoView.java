@@ -2,6 +2,10 @@ package view;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import javax.swing.*;
 
 public class SimulacaoView extends JFrame { //validar se está ok
@@ -11,11 +15,14 @@ public class SimulacaoView extends JFrame { //validar se está ok
 	private JButton btnEncerrarSimulacao;
 	private JButton btnPararEsperar;
 	private JTextField tfVeiculosNaMalha;
+	private File file;
+	
 
-	public SimulacaoView() {
+	public SimulacaoView(File arquivoSelecionado) {
+		this.file = arquivoSelecionado;
 		super.setExtendedState(JFrame.MAXIMIZED_BOTH); // Janela maximizada
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		// Configuração do painel principal
 		painelPrincipal = new JPanel();
 		painelPrincipal.setLayout(new BorderLayout());
@@ -50,11 +57,40 @@ public class SimulacaoView extends JFrame { //validar se está ok
 		painelPrincipal.add(painelContagem, BorderLayout.NORTH);
 		painelPrincipal.add(painelBotoes, BorderLayout.SOUTH);
 
+		MatrizPanel matrizPanel = new MatrizPanel(leituraMatriz());
+		painelPrincipal.add(matrizPanel);
+		painelPrincipal.revalidate();
+		painelPrincipal.repaint();
+		
 		super.setContentPane(this.painelPrincipal);
 		super.setVisible(true);
 	}
 
-	private void renderizarTabelaMalha() {//implementar se necessário
+	private int[][] leituraMatriz() {//implementar se necessário
+		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String linha;
+			linha = br.readLine();
+			int linhas = Integer.parseInt(linha);
+			
+			linha = br.readLine();
+			int colunas = Integer.parseInt(linha);
+			
+			int matriz[][] = new int[linhas][colunas];
+			
+			for(int i=0; i < linhas; i++) {
+				linha = br.readLine();
+				String[] valores = linha.split("\\s+");
+				
+				for(int j=0; j < colunas; j++) {
+					matriz[i][j] = Integer.parseInt(valores[j]);
+				}
+			}
+			
+			return matriz;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public JTable getTabelaMalha() {

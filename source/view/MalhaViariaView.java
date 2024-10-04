@@ -4,8 +4,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -13,15 +18,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
-import javax.swing.JComboBox;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MalhaViariaView extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	private JComboBox<String> comboBox;
+	private File arquivoSelecionado;
 
 	/**
 	 * Launch the application.
@@ -45,16 +49,12 @@ public class MalhaViariaView extends JFrame {
 	 */
 	public MalhaViariaView() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 533, 303);
+		setBounds(100, 100, 560, 303);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		JLabel lblNewLabel = new JLabel("Escolha a malha");
-		lblNewLabel.setBounds(304, 62, 179, 31);
-		contentPane.add(lblNewLabel);
 
 		JLabel lblNewLabel_1 = new JLabel("Sistema de Malha Viária\r\n");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 27));
@@ -102,22 +102,77 @@ public class MalhaViariaView extends JFrame {
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnNewRadioButton);
 		group.add(rdbtnMonitores);
+		
+		final JButton btnEscolherMalha = new JButton("Escolha a malha");
+		btnEscolherMalha.setBounds(302, 70, 129, 34);
+		contentPane.add(btnEscolherMalha);
+		
+		final JLabel labelTxt = new JLabel("");
+		labelTxt.setBounds(302, 80, 129, 14);
+		contentPane.add(labelTxt);
+		labelTxt.setVisible(false);
+		
+		final JButton btnExcluirMalhaViaria = new JButton("X");
+		btnExcluirMalhaViaria.setBounds(441, 76, 44, 23);
+		contentPane.add(btnExcluirMalhaViaria);
+		btnExcluirMalhaViaria.setVisible(false);
+		
+		
+		btnEscolherMalha.addActionListener(new ActionListener() {
 
-		comboBox = new JComboBox<String>();
-		comboBox.setBounds(302, 94, 163, 22);
-		comboBox.addItem("Malha 1");
-		comboBox.addItem("Malha 2");
-		comboBox.addItem("Malha 3");
-		contentPane.add(comboBox);
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				
+				/*
+				 * Criação de um filtro para permitir que apenas possa ser selecionado arquivo txt
+				 * O primeiro parâmetro representa a descriçÃo do filtro
+				 * O segundo é a extensão que será filtrada
+				 */
+				FileNameExtensionFilter filtroTxt = new FileNameExtensionFilter("Arquivo de Texto(.txt)", "txt");
+				fileChooser.setFileFilter(filtroTxt);
+				/*
+				 * File Chooser ele retorna um inteiro que indica a ação do usúário
+				 * 0 -> Ação deu certo (ok) abriu o arquivo com sucesso
+				 * 1-> Usuário clicou emm cancelar ou fechou a janela
+				 * -1 -> Ocorreu algum erro
+				 */
+				int resultado = fileChooser.showOpenDialog(null);
+				
+				if(resultado == JFileChooser.APPROVE_OPTION) {
+					//Seleciono a file que o usuário selecionou
+					File arquivoSelecionado = fileChooser.getSelectedFile();
+					
+					if(verificaPadraoDoArquivo(arquivoSelecionado)) {
+						setArquivoSelecionado(arquivoSelecionado);
+						btnEscolherMalha.setVisible(false);
+						btnExcluirMalhaViaria.setVisible(true);
+						labelTxt.setVisible(true);
+						labelTxt.setText(arquivoSelecionado.getName());
+					} else {
+						JOptionPane.showMessageDialog(null, "O arquivo não está no formato esperado. Por favor insira, novamente");
+					}
+				}
+			}
+			
+		});
+		
+		btnExcluirMalhaViaria.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				setArquivoSelecionado(null);
+				JOptionPane.showMessageDialog(null, "Arquivo excluído com sucesso");
+				labelTxt.setVisible(false);
+				btnEscolherMalha.setVisible(true);
+			}
+		});
 
 		// ActionListener do botão "Iniciar Simulação" , botão teste
 		btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String malhaSelecionada = getMalhaSelecionada();
-                if (malhaSelecionada != null) {
+                if (arquivoSelecionado != null) {
                     // Instanciar a SimulacaoView passando o nome do arquivo da malha, para posteriormente iniciar a simulação com aquela malha
                 	//implementar
-                    SimulacaoView simulacaoView = new SimulacaoView();
+                    SimulacaoView simulacaoView = new SimulacaoView(arquivoSelecionado);
                     simulacaoView.setVisible(true);
                     dispose(); 
                 } else {
@@ -127,16 +182,34 @@ public class MalhaViariaView extends JFrame {
         });
 
     }
-
-	public String getMalhaSelecionada() {
-		String malhaSelecionada = (String) comboBox.getSelectedItem();
-		if (malhaSelecionada.equals("Malha 1")) {
-			return "files/malha1.txt";
-		} else if (malhaSelecionada.equals("Malha 2")) {
-			return "files/malha2.txt";
-		} else if (malhaSelecionada.equals("Malha 3")) {
-			return "files/malha3.txt";
+	
+	public File getArquivoSelecionado() {
+		return arquivoSelecionado;
+	}
+	
+	public void setArquivoSelecionado(File arquivoSelecionado) {
+		this.arquivoSelecionado = arquivoSelecionado;
+	}
+	
+	public boolean verificaPadraoDoArquivo(File arquivo) {
+		try(BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+			String linha;
+			
+			linha = br.readLine();
+			if(linha == null || !linha.matches("^\\d+$")) {
+				return false;
+			}
+			
+			linha = br.readLine();
+			if(linha == null || !linha.matches("^\\d+$")) {
+				return false;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+	        return false; // Retornar false em caso de erro de leitura
 		}
-		return null;
+		
+		return true;
 	}
 }
