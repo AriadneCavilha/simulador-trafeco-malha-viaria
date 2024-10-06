@@ -121,40 +121,57 @@ public class MalhaViariaView extends JFrame {
 		btnEscolherMalha.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-				
-				/*
+		        JFileChooser fileChooser = new JFileChooser();
+		        
+		        /*
 				 * Criação de um filtro para permitir que apenas possa ser selecionado arquivo txt
 				 * O primeiro parâmetro representa a descriçÃo do filtro
 				 * O segundo é a extensão que será filtrada
 				 */
-				FileNameExtensionFilter filtroTxt = new FileNameExtensionFilter("Arquivo de Texto(.txt)", "txt");
-				fileChooser.setFileFilter(filtroTxt);
-				/*
+
+		        // Filtro para permitir apenas arquivos .txt
+		        FileNameExtensionFilter filtroTxt = new FileNameExtensionFilter("Arquivo de Texto(.txt)", "txt");
+		        fileChooser.setFileFilter(filtroTxt);
+		        
+		        /*
 				 * File Chooser ele retorna um inteiro que indica a ação do usúário
 				 * 0 -> Ação deu certo (ok) abriu o arquivo com sucesso
 				 * 1-> Usuário clicou emm cancelar ou fechou a janela
 				 * -1 -> Ocorreu algum erro
 				 */
-				int resultado = fileChooser.showOpenDialog(null);
-				
-				if(resultado == JFileChooser.APPROVE_OPTION) {
-					//Seleciono a file que o usuário selecionou
-					File arquivoSelecionado = fileChooser.getSelectedFile();
-					
-					if(verificaPadraoDoArquivo(arquivoSelecionado)) {
-						setArquivoSelecionado(arquivoSelecionado);
-						btnEscolherMalha.setVisible(false);
-						btnExcluirMalhaViaria.setVisible(true);
-						labelTxt.setVisible(true);
-						labelTxt.setText(arquivoSelecionado.getName());
-					} else {
-						JOptionPane.showMessageDialog(null, "O arquivo não está no formato esperado. Por favor insira, novamente");
-					}
-				}
-			}
-			
+
+		        int resultado = fileChooser.showOpenDialog(null);
+
+		        if (resultado == JFileChooser.APPROVE_OPTION) {
+		            // Seleciona o arquivo que o usuário escolheu
+		            File arquivoSelecionado = fileChooser.getSelectedFile();
+
+		            // Mensagem de depuração
+		            System.out.println("Arquivo selecionado: " + arquivoSelecionado.getAbsolutePath());
+
+		            // Verifica se o arquivo está vazio
+		            if (arquivoSelecionado.length() == 0) {
+		                JOptionPane.showMessageDialog(null, "O arquivo está vazio. Por favor, insira um arquivo válido.");
+		                return;
+		            }
+
+		            // Verifica se o arquivo está no formato esperado
+		            if (verificaPadraoDoArquivo(arquivoSelecionado)) {
+		                setArquivoSelecionado(arquivoSelecionado);
+		                btnEscolherMalha.setVisible(false);
+		                btnExcluirMalhaViaria.setVisible(true);
+		                labelTxt.setVisible(true);
+		                labelTxt.setText(arquivoSelecionado.getName());
+		            } else {
+		                JOptionPane.showMessageDialog(null, "O arquivo não está no formato esperado. Por favor insira, novamente");
+		            }
+		        } else {
+		            System.out.println("Operação cancelada pelo usuário.");
+		        }
+		    }
+
 		});
+
 		
 		btnExcluirMalhaViaria.addActionListener(new ActionListener() {
 			
@@ -192,23 +209,29 @@ public class MalhaViariaView extends JFrame {
 	}
 	
 	public boolean verificaPadraoDoArquivo(File arquivo) {
-		try(BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
-			String linha;
-			
-			linha = br.readLine();
-			if(linha == null || !linha.matches("^\\d+$")) {
-				return false;
-			}
-			
-			linha = br.readLine();
-			if(linha == null || !linha.matches("^\\d+$")) {
-				return false;
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-	        return false; // Retornar false em caso de erro de leitura
-		}
+		 try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+		        String linha;
+
+		        // Verifica as duas primeiras linhas
+		        for (int i = 0; i < 2; i++) {
+		            linha = br.readLine();
+		            if (linha == null || !linha.trim().matches("^\\d+$")) {
+		                return false; // Linha deve ser um número inteiro
+		            }
+		        }
+
+		        // Verifica as linhas restantes
+		        while ((linha = br.readLine()) != null) {
+		            if (!linha.trim().matches("^(\\d+\\s+)*\\d+$")) {
+		                return false; // Cada linha deve conter apenas números e espaços
+		            }
+		        }
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false; // Retorna false em caso de erro de leitura
+		    }
+
 		
 		return true;
 	}

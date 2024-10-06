@@ -70,10 +70,10 @@ public class SimulacaoView extends JFrame { //validar se está ok
 		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String linha;
 			linha = br.readLine();
-			int linhas = Integer.parseInt(linha);
+			int linhas = Integer.parseInt(linha.trim());
 			
 			linha = br.readLine();
-			int colunas = Integer.parseInt(linha);
+			int colunas = Integer.parseInt(linha.trim());
 			
 			int matriz[][] = new int[linhas][colunas];
 			
@@ -82,7 +82,7 @@ public class SimulacaoView extends JFrame { //validar se está ok
 				String[] valores = linha.split("\\s+");
 				
 				for(int j=0; j < colunas; j++) {
-					matriz[i][j] = Integer.parseInt(valores[j]);
+					matriz[i][j] = Integer.parseInt(valores[j].trim());
 				}
 			}
 			
