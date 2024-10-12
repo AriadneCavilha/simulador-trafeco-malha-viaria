@@ -11,6 +11,7 @@ import java.io.FileReader;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,13 +24,18 @@ public class SimulacaoView extends JFrame { //validar se está ok
 	private JButton btnEncerrarSimulacao;
 	private JButton btnPararEsperar;
 	private JTextField tfVeiculosNaMalha;
+	private String txtExclusaoMutua;
+	private int qtdMaximaVeiculos;
 	private File file;
 	
 
-	public SimulacaoView(File arquivoSelecionado) {
+	public SimulacaoView(File arquivoSelecionado, int qtdMaxVeiculosText, String txtExclusaoMutua) {
 		this.file = arquivoSelecionado;
+		this.qtdMaximaVeiculos = qtdMaxVeiculosText;
+		this.txtExclusaoMutua = txtExclusaoMutua;
 		super.setExtendedState(JFrame.MAXIMIZED_BOTH); // Janela maximizada
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		
 		// Configuração do painel principal
 		painelPrincipal = new JPanel();
@@ -51,7 +57,7 @@ public class SimulacaoView extends JFrame { //validar se está ok
 		//tem que validar como mostrar essa tabela
 		tabelaMalha = new JTable();
 
-		tfVeiculosNaMalha = new JTextField("Veículos na malha: 0");
+		tfVeiculosNaMalha = new JTextField("Veículos na malha: " + this.getQtdMaximaVeiculos());
 		tfVeiculosNaMalha.setEditable(false);
 		tfVeiculosNaMalha.setHorizontalAlignment(JTextField.CENTER); // Centraliza o texto
 		tfVeiculosNaMalha.setFont(new Font("Arial", Font.PLAIN, 24)); // Aumenta a fonte
@@ -111,6 +117,22 @@ public class SimulacaoView extends JFrame { //validar se está ok
 
 	public JButton getBtnPararEsperar() {
 		return btnPararEsperar;
+	}
+	
+	public String getTxtExclusaoMutua() {
+		return txtExclusaoMutua;
+	}
+	
+	public void setTxtExclusaoMutua(String txtExclusaoMutua) {
+		this.txtExclusaoMutua = txtExclusaoMutua;
+	}
+	
+	public void setQtdMaximaVeiculos(int qtdMaximaVeiculos) {
+		this.qtdMaximaVeiculos = qtdMaximaVeiculos;
+	}
+	
+	public int getQtdMaximaVeiculos() {
+		return qtdMaximaVeiculos;
 	}
 
 	public void adicionarAcaoEncerrarSimulacao(ActionListener actionListener) {
