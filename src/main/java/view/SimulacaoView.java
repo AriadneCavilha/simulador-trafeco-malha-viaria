@@ -20,7 +20,7 @@ import controller.MalhaController;
 import model.Celula;
 import model.ConfiguracoesMalha;
 
-public class SimulacaoView extends JFrame implements observer.Observer {
+public class SimulacaoView extends JFrame {
 
 	private JPanel painelPrincipal;
 	private JTable tabelaMalha;
@@ -75,8 +75,7 @@ public class SimulacaoView extends JFrame implements observer.Observer {
 		JPanel painelContagem = new JPanel(new FlowLayout());
 		painelContagem.add(tfVeiculosNaMalha);
 
-		malhaController = new MalhaController();
-		malhaController.anexarObserver(this);
+		malhaController = new MalhaController(this);
 		malhaController.start();
 		// Adiciona os componentes ao painel
 
@@ -138,19 +137,16 @@ public class SimulacaoView extends JFrame implements observer.Observer {
 		tfVeiculosNaMalha.setText("Veículos na malha: " + veiculosNaMalha);
 	}
 
-	@Override
 	public void atualizandoCarrosNaMalha(int qtdCarrosMalha) {
 		tfVeiculosNaMalha.setText("Veículos na malha: " + qtdCarrosMalha);
 	}
 
-	@Override
 	public void atualizandoIconeDaCelula(Celula celula) {
 		MalhaTableModel malhaTableModel = (MalhaTableModel) tabelaMalha.getModel();
 		malhaTableModel.fireTableCellUpdated(celula.getLinhaAtual(), celula.getColunaAtual());
 		malhaTableModel.fireTableDataChanged();
 	}
 
-	@Override
 	public void encerrarSimulacao() {
 		btnEncerrarSimulacao.doClick();
 	}

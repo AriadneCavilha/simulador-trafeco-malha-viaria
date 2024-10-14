@@ -10,15 +10,18 @@ import model.ClassificacaoCelula;
 import model.ConfiguracoesMalha;
 import model.Malha;
 import observer.Observer;
+import view.SimulacaoView;
 
 public class MalhaController extends Thread {
 
     private List<Carro> carrosEmCirculacao;
     private List<Observer> observers;
+    private SimulacaoView view;
 
-    public MalhaController() {
+    public MalhaController(SimulacaoView view) {
         this.carrosEmCirculacao = new ArrayList<>();
         this.observers= new ArrayList<>();
+        this.view = view;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class MalhaController extends Thread {
             if (this.getQtdCarrosCirculacao() == 0)
             	ConfiguracoesMalha.getInstance().emExecucao = false;
         }
-        encerrarSimulacao();
+        view.encerrarSimulacao();
     }
 
     private void AtualizarCelula(int linha, int coluna){
@@ -62,8 +65,8 @@ public class MalhaController extends Thread {
         Carro carro = new Carro(this, celulaInicial);
 
         carrosEmCirculacao.add(carro);
-        this.atualizarQuantidadeDeCarrosDaMalha();
-        this.atualizarIconeDaCelula(celulaInicial);
+        view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
+        view.atualizandoIconeDaCelula(celulaInicial);
         carro.printInformacoes();
         carro.start();
     }
@@ -72,8 +75,8 @@ public class MalhaController extends Thread {
         this.carrosEmCirculacao.remove(carro);
         Celula celula = carro.getCelulaAtual();
         celula.setCarroAtual(null);
-        this.atualizarIconeDaCelula(celula);
-        this.atualizarQuantidadeDeCarrosDaMalha();
+        view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
+        view.atualizandoIconeDaCelula(celula);
     }
 
     public void anexarObserver(Observer observer){
@@ -83,17 +86,9 @@ public class MalhaController extends Thread {
     public int getQtdCarrosCirculacao(){
         return this.carrosEmCirculacao.size();
     }
-
-    public void atualizarIconeDaCelula(Celula celula) {
-        for (Observer obs: observers){
-            obs.atualizandoIconeDaCelula(celula);
-        }
-    }
-
-    public void atualizarQuantidadeDeCarrosDaMalha(){
-        for (Observer obs: observers){
-            obs.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
-        }
+    
+    public void atualizarIconeDaCelula(Celula celulaAtual) {
+    	view.atualizandoIconeDaCelula(celulaAtual);
     }
 
     public void encerrarSimulacao(){
