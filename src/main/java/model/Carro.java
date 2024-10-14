@@ -3,21 +3,21 @@ package model;
 import java.util.Random;
 
 public class Carro extends Thread {
-	 private int linha;
-	 private int coluna;
-	 private int velocidade;
-	 private String direcao;
+	
 	 private boolean ativo; 
-	 private Random random;
+	 private int tempoEspera;
+	 private Celula celulaAtual;
+	 private static Malha instance;
+	 private Random random = new Random();
 	 
-	 public Carro(int linha, int coluna, int velocidade, String direcao, boolean ativo, Random random) {
+	 public Carro (int tempoEspera, Celula celulaAtual) {
 		super();
-		this.linha = linha;
-		this.coluna = coluna;
-		this.velocidade = velocidade;
-		this.direcao = direcao;
-		this.ativo = ativo;
-		this.random = random;
+		this.celulaAtual = celulaAtual;
+		this.tempoEspera = (random.nextInt(10) * 100);
+	}
+	 
+	public Celula getCelulaAtual() {
+		return celulaAtual;
 	}
 
 	@Override

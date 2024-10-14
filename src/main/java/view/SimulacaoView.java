@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,13 +12,16 @@ import java.io.FileReader;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumnModel;
 
-public class SimulacaoView extends JFrame { //validar se está ok
+import model.ConfiguracoesMalha;
+
+public class SimulacaoView extends JFrame {
 
 	private JPanel painelPrincipal;
 	private JTable tabelaMalha;
@@ -27,35 +31,41 @@ public class SimulacaoView extends JFrame { //validar se está ok
 	private String txtExclusaoMutua;
 	private int qtdMaximaVeiculos;
 	private File file;
-	
+	JScrollPane scrollPane = new JScrollPane(tabelaMalha);
 
-	public SimulacaoView(File arquivoSelecionado, int qtdMaxVeiculosText, String txtExclusaoMutua) {
+	public SimulacaoView(File arquivoSelecionado) {
 		this.file = arquivoSelecionado;
-		this.qtdMaximaVeiculos = qtdMaxVeiculosText;
-		this.txtExclusaoMutua = txtExclusaoMutua;
-		super.setExtendedState(JFrame.MAXIMIZED_BOTH); // Janela maximizada
+		super.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		
-		// Configuração do painel principal
 		painelPrincipal = new JPanel();
-		painelPrincipal.setLayout(new BorderLayout());
 
-		// Configuração dos botões
 		btnEncerrarSimulacao = new JButton("Encerrar Simulação");
-		btnPararEsperar = new JButton("Parar / Esperar");
-
-		// Aumentar o tamanho dos botões
+		btnPararEsperar = new JButton("Pausar Tráfego");
+		
 		btnEncerrarSimulacao.setPreferredSize(new Dimension(200, 50));
 		btnPararEsperar.setPreferredSize(new Dimension(200, 50));
 
+		btnEncerrarSimulacao.addActionListener((ActionEvent e) -> {
+			ConfiguracoesMalha.getInstance().emExecucao = false;
+			ConfiguracoesMalha.reset();
+			super.dispose();
+			new MalhaViariaView(); 
+		});		
+
+		btnPararEsperar.addActionListener((ActionEvent e) -> {
+			if(ConfiguracoesMalha.getInstance().isInserirNovosCarros()) {
+				ConfiguracoesMalha.getInstance().setInserirNovosCarros(false);
+				btnPararEsperar.setText("Continuar Tráfego");
+			} else {
+				ConfiguracoesMalha.getInstance().setInserirNovosCarros(true);
+				btnPararEsperar.setText("Pausar Tráfego");
+			}
+		});		
+		
 		JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10)); // Espaçamento horizontal de 30
 		painelBotoes.add(btnPararEsperar);
 		painelBotoes.add(btnEncerrarSimulacao);
-
-		// Tabela (grid) que exibirá a malha
-		//tem que validar como mostrar essa tabela
-		tabelaMalha = new JTable();
 
 		tfVeiculosNaMalha = new JTextField("Veículos na malha: " + this.getQtdMaximaVeiculos());
 		tfVeiculosNaMalha.setEditable(false);
@@ -67,47 +77,41 @@ public class SimulacaoView extends JFrame { //validar se está ok
 		painelContagem.add(tfVeiculosNaMalha);
 
 		// Adiciona os componentes ao painel
-		painelPrincipal.add(new JScrollPane(tabelaMalha), BorderLayout.CENTER);
+
 		painelPrincipal.add(painelContagem, BorderLayout.NORTH);
 		painelPrincipal.add(painelBotoes, BorderLayout.SOUTH);
-
-		MatrizPanel matrizPanel = new MatrizPanel(leituraMatriz());
-		painelPrincipal.add(matrizPanel);
-		painelPrincipal.revalidate();
-		painelPrincipal.repaint();
 		
+		this.loadTableModel();
+        pack();
+
 		super.setContentPane(this.painelPrincipal);
 		super.setVisible(true);
 	}
+	
+    private void loadTableModel() {
+        this.tabelaMalha = new JTable();
+        tabelaMalha.setModel(new MalhaTableModel());
+        tabelaMalha.setRowHeight(32);
+        tabelaMalha.setDefaultRenderer(Object.class, new MalhaTableModelCellRenderer());
+        
+        
+        tabelaMalha.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+        TableColumnModel columnModel = tabelaMalha.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setMaxWidth(40);
+        }
+        tabelaMalha.setPreferredScrollableViewportSize(tabelaMalha.getPreferredSize());
+        JScrollPane scrollPane = new JScrollPane(tabelaMalha);
+        scrollPane.setPreferredSize(tabelaMalha.getPreferredSize());
 
-	private int[][] leituraMatriz() {//implementar se necessário
-		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String linha;
-			linha = br.readLine();
-			int linhas = Integer.parseInt(linha.trim());
-			
-			linha = br.readLine();
-			int colunas = Integer.parseInt(linha.trim());
-			
-			int matriz[][] = new int[linhas][colunas];
-			
-			for(int i=0; i < linhas; i++) {
-				linha = br.readLine();
-				String[] valores = linha.split("\\s+");
-				
-				for(int j=0; j < colunas; j++) {
-					matriz[i][j] = Integer.parseInt(valores[j].trim());
-				}
-			}
-			
-			return matriz;
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+        // Adicionar o JScrollPane ao painel principal
+        painelPrincipal.setLayout(new BorderLayout());
+        painelPrincipal.add(scrollPane, BorderLayout.CENTER);
 
-	public JTable getTabelaMalha() {
+		tabelaMalha.revalidate();
+    }
+
+    public JTable getTabelaMalha() {
 		return tabelaMalha;
 	}
 
@@ -122,25 +126,13 @@ public class SimulacaoView extends JFrame { //validar se está ok
 	public String getTxtExclusaoMutua() {
 		return txtExclusaoMutua;
 	}
-	
-	public void setTxtExclusaoMutua(String txtExclusaoMutua) {
-		this.txtExclusaoMutua = txtExclusaoMutua;
-	}
-	
-	public void setQtdMaximaVeiculos(int qtdMaximaVeiculos) {
-		this.qtdMaximaVeiculos = qtdMaximaVeiculos;
-	}
-	
+
 	public int getQtdMaximaVeiculos() {
 		return qtdMaximaVeiculos;
 	}
 
 	public void adicionarAcaoEncerrarSimulacao(ActionListener actionListener) {
 		btnEncerrarSimulacao.addActionListener(actionListener);
-	}
-
-	public void adicionarAcaoPararEsperar(ActionListener actionListener) {
-		btnPararEsperar.addActionListener(actionListener);
 	}
 
 	public void atualizarNumeroVeiculos(int veiculosNaMalha) {

@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import model.ConfiguracoesMalha;
+import model.Malha;
+
 public class MalhaViariaView extends JFrame {
 
 	private JPanel contentPane;
@@ -29,23 +31,6 @@ public class MalhaViariaView extends JFrame {
 	private JTextField textField_2;
 	private File arquivoSelecionado;
 	private int qtdMaxVeiculos;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MalhaViariaView frame = new MalhaViariaView();
-					frame.setVisible(true);
-					frame.setResizable(false);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -222,17 +207,25 @@ public class MalhaViariaView extends JFrame {
 					return; 
 				}
 				if (arquivoSelecionado != null) {
-					// Instanciar a SimulacaoView passando o nome do arquivo da malha, para
-					// posteriormente iniciar a simulação com aquela malha
-					// implementar
-					SimulacaoView simulacaoView = new SimulacaoView(arquivoSelecionado, getQtdMaxVeiculos(), txtExclusaoMutua);
-					simulacaoView.setVisible(true);
+					ConfiguracoesMalha.reset();
+					//metodo encadeado
+					ConfiguracoesMalha.getInstance()
+									  .setMalhaAtual(arquivoSelecionado)
+									  .setMecanismoExclusao(txtExclusaoMutua)
+									  .setQtdCarrosSimulacao(qtdMaxVeiculos)
+									  .setIntervaloInsercao(Double.parseDouble(textField_1.getText()));
+					Malha.reset();
+					new SimulacaoView(arquivoSelecionado);
 					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Nenhuma malha selecionada.");
 				}
 			}
 		});
+		
+		this.setLocationRelativeTo(null);
+		this.setResizable(false);
+        super.setVisible(true);
 
 	}
 	
