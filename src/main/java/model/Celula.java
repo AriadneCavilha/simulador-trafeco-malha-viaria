@@ -1,6 +1,12 @@
 package model;
 
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Celula {
+
 	private int colunaAtual;
 	private int linhaAtual;
 	private int qtdLinhas;
@@ -11,6 +17,8 @@ public class Celula {
 	private int tipoCelula;
 	private Carro carroAtual;
 	private Boolean celulaDisponivel;
+	private Lock lock;
+	private Semaphore semaforo;
 
 	public Celula(int colunaAtual, int linhaAtual, int qtdLinhas, int qtdColunas, int tipoCelula) {
 		this.colunaAtual = colunaAtual;
@@ -20,6 +28,9 @@ public class Celula {
 		this.ultimaLinhaDaMalha = qtdLinhas - 1;
 		this.ultimaColunaDaMalha = qtdColunas - 1;
 		this.tipoCelula = tipoCelula;
+		this.semaforo = new Semaphore(1);
+		this.lock = new ReentrantLock();
+		this.setClassificacao();
 	}
 
 	private void setClassificacao() {
@@ -71,6 +82,61 @@ public class Celula {
 		} else {
 			return ConfiguracoesMalha.ICONS_PATH + "icon" + this.tipoCelula + ".png";
 		}
+	}
+
+	public boolean tentarReservar() {
+		if (this.carroAtual != null) {
+			return false;
+		}
+
+		if (ConfiguracoesMalha.getInstance().getMecanismoExclusao() == "Semáforos") {
+			return tentarReservarSemaforo();
+		} else {
+			return tentarReservarMonitor();
+		}
+	}
+
+	public void liberar() {
+		if (ConfiguracoesMalha.getInstance().getMecanismoExclusao() == "Semáforo")
+			this.liberarSemaforo();
+		else
+			this.liberarMonitor();
+	}
+
+	public void liberarSemaforo() {
+		try {
+			this.semaforo.release();
+		} catch (Exception e) {
+		}
+	}
+
+	public void liberarMonitor() {
+		try {
+			this.lock.unlock();
+		} catch (Exception e) {
+		}
+	}
+
+	private boolean tentarReservarMonitor() {
+		try {
+			return this.lock.tryLock(100, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			System.out.println(e.getStackTrace());
+			return false;
+		}
+	}
+
+	private boolean tentarReservarSemaforo() {
+		try {
+			return this.semaforo.tryAcquire(100, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			System.out.println(e.getStackTrace());
+			return false;
+		}
+	}
+
+	public void setCarroAtual(Carro carroAtual) {
+		this.carroAtual = carroAtual;
 	}
 
 	public boolean celulaDisponivel() {
