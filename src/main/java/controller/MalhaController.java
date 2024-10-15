@@ -4,23 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import constantes.ClassificacaoCelula;
 import model.Carro;
 import model.Celula;
-import model.ClassificacaoCelula;
 import model.ConfiguracoesMalha;
 import model.Malha;
-import observer.Observer;
 import view.SimulacaoView;
 
 public class MalhaController extends Thread {
 
     private List<Carro> carrosEmCirculacao;
-    private List<Observer> observers;
     private SimulacaoView view;
 
     public MalhaController(SimulacaoView view) {
         this.carrosEmCirculacao = new ArrayList<>();
-        this.observers= new ArrayList<>();
         this.view = view;
     }
 
@@ -54,7 +51,7 @@ public class MalhaController extends Thread {
         if (this.getQtdCarrosCirculacao() == ConfiguracoesMalha.getInstance().getQtdCarrosSimulacao()) // Não pode ultrapassar o limite estabelecido
             return;
         try{
-            Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao()* 1000));
+            Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao()));
             adicionarNovoCarroAMalha(celulaAtual);
         } catch (Exception e){
             System.out.println(e.getMessage()+"   -   "+ Arrays.toString(e.getStackTrace()));
@@ -79,10 +76,6 @@ public class MalhaController extends Thread {
         view.atualizandoIconeDaCelula(celula);
     }
 
-    public void anexarObserver(Observer observer){
-        this.observers.add(observer);
-    }
-
     public int getQtdCarrosCirculacao(){
         return this.carrosEmCirculacao.size();
     }
@@ -92,9 +85,7 @@ public class MalhaController extends Thread {
     }
 
     public void encerrarSimulacao(){
-        for (Observer obs: observers){
-            obs.encerrarSimulacao();
-        }
+        view.encerrarSimulacao();
     }
 
 }

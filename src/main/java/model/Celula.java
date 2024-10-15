@@ -5,6 +5,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import constantes.ClassificacaoCelula;
+import constantes.TipoCelula;
+
 public class Celula {
 
 	private int colunaAtual;

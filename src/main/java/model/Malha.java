@@ -5,8 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import constantes.ClassificacaoCelula;
+import constantes.TipoCelula;
 
-import observer.Observer;
 
 public class Malha {
 	private static Malha instance;
@@ -14,8 +15,6 @@ public class Malha {
 	private int qtdColunas;
 	private Scanner matrizScanner;
 	private Celula matrizMalha[][];
-    private List<Observer> observers;
-
 
     private Random random = new Random();
      
@@ -124,23 +123,6 @@ public class Malha {
     private Celula getCelulaAEsquerda(Celula celula){
         return matrizMalha[celula.getLinhaAtual()][celula.getColunaAtual()-1];
     }
-	
-    public void anexarObserver(Observer observer){
-        this.observers.add(observer);
-    }
-
-    public void atualizarIconeDaCelula(Celula celula) {
-        for (Observer obs: observers){
-            obs.atualizandoIconeDaCelula(celula);
-        }
-    }
-
-    public void encerrarSimulacao(){
-        for (Observer obs: observers){
-            obs.encerrarSimulacao();
-        }
-    }
-	
 
 	public int getQtdLinhas() {
 		return qtdLinhas;

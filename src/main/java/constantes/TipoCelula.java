@@ -1,4 +1,4 @@
-package model;
+package constantes;
 
 public class TipoCelula {
     public static final int VAZIO = 0;

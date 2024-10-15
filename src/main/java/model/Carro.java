@@ -2,6 +2,7 @@ package model;
 
 import java.util.Random;
 
+import constantes.ClassificacaoCelula;
 import controller.MalhaController;
 
 public class Carro extends Thread {

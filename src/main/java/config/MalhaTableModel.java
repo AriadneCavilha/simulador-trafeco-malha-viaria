@@ -1,4 +1,4 @@
-package view;
+package config;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;

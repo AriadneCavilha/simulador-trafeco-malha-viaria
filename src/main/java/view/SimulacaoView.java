@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -11,11 +12,12 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableColumnModel;
 
+import config.MalhaTableModel;
+import config.MalhaTableModelCellRenderer;
 import controller.MalhaController;
 import model.Celula;
 import model.ConfiguracoesMalha;
@@ -88,26 +90,57 @@ public class SimulacaoView extends JFrame {
 		super.setVisible(true);
 	}
 
+//	private void loadTableModel() {
+//	    this.tabelaMalha = new JTable();
+//	    tabelaMalha.setModel(new MalhaTableModel());
+//	    tabelaMalha.setRowHeight(32);
+//	    tabelaMalha.setDefaultRenderer(Object.class, new MalhaTableModelCellRenderer());
+//
+//	    tabelaMalha.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//	    TableColumnModel columnModel = tabelaMalha.getColumnModel();
+//	    for (int i = 0; i < columnModel.getColumnCount(); i++) {
+//	        columnModel.getColumn(i).setMaxWidth(40);
+//	    }
+//
+//	    tabelaMalha.setPreferredScrollableViewportSize(tabelaMalha.getPreferredSize());
+//
+//	    // Removendo o JScrollPane para evitar scroll
+//	    JPanel centralPanel = new JPanel(new GridBagLayout());
+//	    centralPanel.add(tabelaMalha);
+//
+//	    painelPrincipal.setLayout(new BorderLayout());
+//	    painelPrincipal.add(centralPanel, BorderLayout.CENTER);
+//
+//	    tabelaMalha.revalidate();
+//	}
+	
 	private void loadTableModel() {
-		this.tabelaMalha = new JTable();
-		tabelaMalha.setModel(new MalhaTableModel());
-		tabelaMalha.setRowHeight(32);
-		tabelaMalha.setDefaultRenderer(Object.class, new MalhaTableModelCellRenderer());
+	    this.tabelaMalha = new JTable();
+	    tabelaMalha.setModel(new MalhaTableModel());
 
-		tabelaMalha.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
-		TableColumnModel columnModel = tabelaMalha.getColumnModel();
-		for (int i = 0; i < columnModel.getColumnCount(); i++) {
-			columnModel.getColumn(i).setMaxWidth(40);
-		}
-		tabelaMalha.setPreferredScrollableViewportSize(tabelaMalha.getPreferredSize());
-		JScrollPane scrollPane = new JScrollPane(tabelaMalha);
-		scrollPane.setPreferredSize(tabelaMalha.getPreferredSize());
+	    int cellSize = 32; // Definindo um tamanho de célula quadrada
+	    tabelaMalha.setRowHeight(cellSize);
 
-		painelPrincipal.setLayout(new BorderLayout());
-		painelPrincipal.add(scrollPane, BorderLayout.CENTER);
+	    tabelaMalha.setDefaultRenderer(Object.class, new MalhaTableModelCellRenderer());
 
-		tabelaMalha.revalidate();
+	    tabelaMalha.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+	    TableColumnModel columnModel = tabelaMalha.getColumnModel();
+	    for (int i = 0; i < columnModel.getColumnCount(); i++) {
+	        columnModel.getColumn(i).setMaxWidth(cellSize); // Definindo o mesmo valor da altura
+	        columnModel.getColumn(i).setMinWidth(cellSize); // Garantindo que não haja redimensionamento
+	    }
+
+	    tabelaMalha.setPreferredScrollableViewportSize(tabelaMalha.getPreferredSize());
+
+	    JPanel centralPanel = new JPanel(new GridBagLayout());
+	    centralPanel.add(tabelaMalha);
+
+	    painelPrincipal.setLayout(new BorderLayout());
+	    painelPrincipal.add(centralPanel, BorderLayout.CENTER);
+
+	    tabelaMalha.revalidate();
 	}
+
 
 	public JTable getTabelaMalha() {
 		return tabelaMalha;
