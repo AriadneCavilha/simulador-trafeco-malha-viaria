@@ -49,7 +49,7 @@ public class Malha {
 			for(int linha = 0; linha < this.qtdLinhas; linha++) {
 				for(int coluna = 0 ; coluna < this.qtdColunas; coluna++) {
 					int tipoCelula = matrizScanner.nextInt();
-					Celula celulaAtual = new Celula(coluna, linha, qtdColunas, qtdColunas, tipoCelula);
+					Celula celulaAtual = new Celula(coluna, linha, qtdLinhas, qtdColunas, tipoCelula);
 					this.matrizMalha [linha][coluna] = celulaAtual;
 				}
 			}
