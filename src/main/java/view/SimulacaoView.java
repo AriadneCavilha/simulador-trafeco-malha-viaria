@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.table.TableColumnModel;
 
 import config.MalhaTableModel;
@@ -33,7 +34,9 @@ public class SimulacaoView extends JFrame {
 	private int qtdMaximaVeiculos;
 	
     private MalhaController malhaController;
+    private Timer updateTimer; // Timer para atualização periódica
 
+    
 	public SimulacaoView(File arquivoSelecionado) {
 		super.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,22 +76,24 @@ public class SimulacaoView extends JFrame {
 		tfVeiculosNaMalha.setHorizontalAlignment(JTextField.CENTER); // Centraliza o texto
 		tfVeiculosNaMalha.setFont(new Font("Arial", Font.PLAIN, 24)); // Aumenta a fonte
 
-		// Painel para a contagem
 		JPanel painelContagem = new JPanel(new FlowLayout());
 		painelContagem.add(tfVeiculosNaMalha);
-
-		malhaController = new MalhaController(this);
-		malhaController.start();
-		// Adiciona os componentes ao painel
 
 		this.loadTableModel();
 		painelPrincipal.add(painelContagem, BorderLayout.NORTH);
 		painelPrincipal.add(painelBotoes, BorderLayout.SOUTH);
 
-
 		super.setContentPane(this.painelPrincipal);
 		super.setVisible(true);
+		iniciarSimulacao();
 	}
+	
+	  private void iniciarSimulacao() {
+	        new Thread(() -> {
+	            malhaController = new MalhaController(this);
+	            malhaController.iniciarSimulacao();
+	        }).start();
+	    }
 
 //	private void loadTableModel() {
 //	    this.tabelaMalha = new JTable();

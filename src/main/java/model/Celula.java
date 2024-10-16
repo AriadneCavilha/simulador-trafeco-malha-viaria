@@ -100,7 +100,7 @@ public class Celula {
 	}
 
 	public void liberar() {
-		if (ConfiguracoesMalha.getInstance().getMecanismoExclusao() == "Semáforo")
+		if (ConfiguracoesMalha.getInstance().getMecanismoExclusao() == "Semáforos")
 			this.liberarSemaforo();
 		else
 			this.liberarMonitor();

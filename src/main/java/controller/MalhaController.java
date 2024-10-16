@@ -11,8 +11,9 @@ import model.ConfiguracoesMalha;
 import model.Malha;
 import view.SimulacaoView;
 
-public class MalhaController extends Thread {
+public class MalhaController {
 
+<<<<<<< HEAD
     private List<Carro> carrosEmCirculacao;
     private SimulacaoView view;
 
@@ -20,28 +21,37 @@ public class MalhaController extends Thread {
         this.carrosEmCirculacao = new ArrayList<>();
         this.view = view;
     }
+=======
+	private List<Carro> carrosEmCirculacao;
+	private SimulacaoView view;
 
-    @Override
-    public void run() {
-        inicializar();
-    }
+	public MalhaController(SimulacaoView view) {
+		this.carrosEmCirculacao = new ArrayList<>();
+		this.view = view;
+	}
+>>>>>>> 7e01dda (Ajustes cruzamento)
 
-    private void inicializar() {
-        ConfiguracoesMalha.getInstance().emExecucao = true;
-        while (ConfiguracoesMalha.getInstance().emExecucao){
-            while (ConfiguracoesMalha.getInstance().isInserirNovosCarros() && ConfiguracoesMalha.getInstance().emExecucao){
-                for (int linha = 0; linha < Malha.getInstance().getQtdLinhas(); linha++) {
-                    for (int coluna = 0; coluna < Malha.getInstance().getQtdColunas(); coluna++) {
-                        this.AtualizarCelula(linha,coluna);
-                    }
-                }
-            }
-            if (this.getQtdCarrosCirculacao() == 0)
-            	ConfiguracoesMalha.getInstance().emExecucao = false;
-        }
-        view.encerrarSimulacao();
-    }
+	public void iniciarSimulacao() {
+		ConfiguracoesMalha.getInstance().emExecucao = true;
 
+		// Loop de controle principal da simulação
+		while (ConfiguracoesMalha.getInstance().emExecucao) {
+			// Loop para inserir novos carros
+			while (ConfiguracoesMalha.getInstance().isInserirNovosCarros()
+					&& ConfiguracoesMalha.getInstance().emExecucao) {
+				for (int linha = 0; linha < Malha.getInstance().getQtdLinhas(); linha++) {
+					for (int coluna = 0; coluna < Malha.getInstance().getQtdColunas(); coluna++) {
+						this.AtualizarCelula(linha, coluna);
+					}
+				}
+			}
+			if (this.getQtdCarrosCirculacao() == 0) {
+				ConfiguracoesMalha.getInstance().emExecucao = false;
+			}
+		}
+	}
+
+<<<<<<< HEAD
     private void AtualizarCelula(int linha, int coluna){
         Celula celulaAtual = Malha.getInstance().getMatrizMalha()[linha][coluna];
         if (!celulaAtual.getClassificacao().equals(ClassificacaoCelula.ENTRADA)) // Tem de ser entrada
@@ -57,25 +67,43 @@ public class MalhaController extends Thread {
             System.out.println(e.getMessage()+"   -   "+ Arrays.toString(e.getStackTrace()));
         }
     }
+=======
+	private void AtualizarCelula(int linha, int coluna) {
+		Celula celulaAtual = Malha.getInstance().getMatrizMalha()[linha][coluna];
+		if (!celulaAtual.getClassificacao().equals(ClassificacaoCelula.ENTRADA)) // Tem de ser entrada
+			return;
+		if (!celulaAtual.celulaDisponivel()) // Tem de estar vazia
+			return;
+		if (this.getQtdCarrosCirculacao() == ConfiguracoesMalha.getInstance().getQtdCarrosSimulacao()) // Não pode
+			return;
+		try {
+			Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao() * 1000));
+			adicionarNovoCarroAMalha(celulaAtual);
+		} catch (Exception e) {
+			System.out.println(e.getMessage() + "   -   " + Arrays.toString(e.getStackTrace()));
+		}
+	}
+>>>>>>> 7e01dda (Ajustes cruzamento)
 
-    private void adicionarNovoCarroAMalha(Celula celulaInicial){
-        Carro carro = new Carro(this, celulaInicial);
+	private void adicionarNovoCarroAMalha(Celula celulaInicial) {
+		Carro carro = new Carro(this, celulaInicial);
 
-        carrosEmCirculacao.add(carro);
-        view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
-        view.atualizandoIconeDaCelula(celulaInicial);
-        carro.printInformacoes();
-        carro.start();
-    }
+		carrosEmCirculacao.add(carro);
+		view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
+		view.atualizandoIconeDaCelula(celulaInicial);
+		carro.printInformacoes();
+		carro.start();
+	}
 
-    public void removerCarroDaMalha(Carro carro){
-        this.carrosEmCirculacao.remove(carro);
-        Celula celula = carro.getCelulaAtual();
-        celula.setCarroAtual(null);
-        view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
-        view.atualizandoIconeDaCelula(celula);
-    }
+	public void removerCarroDaMalha(Carro carro) {
+		this.carrosEmCirculacao.remove(carro);
+		Celula celula = carro.getCelulaAtual();
+		celula.setCarroAtual(null);
+		view.atualizandoCarrosNaMalha(this.getQtdCarrosCirculacao());
+		view.atualizandoIconeDaCelula(celula);
+	}
 
+<<<<<<< HEAD
     public int getQtdCarrosCirculacao(){
         return this.carrosEmCirculacao.size();
     }
@@ -87,5 +115,13 @@ public class MalhaController extends Thread {
     public void encerrarSimulacao(){
         view.encerrarSimulacao();
     }
+=======
+	public int getQtdCarrosCirculacao() {
+		return this.carrosEmCirculacao.size();
+	}
+>>>>>>> 7e01dda (Ajustes cruzamento)
 
+	public void atualizarIconeDaCelula(Celula celulaAtual) {
+		view.atualizandoIconeDaCelula(celulaAtual);
+	}
 }

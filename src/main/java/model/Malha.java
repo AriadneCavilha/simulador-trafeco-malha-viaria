@@ -2,13 +2,15 @@ package model;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import constantes.ClassificacaoCelula;
 import constantes.TipoCelula;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7e01dda (Ajustes cruzamento)
 public class Malha {
 	private static Malha instance;
 	private int qtdLinhas;
@@ -35,7 +37,6 @@ public class Malha {
 	}
 	
 	private void leituraArquivo(File arquivoMalha) {
-		System.out.println("entrou");
 		try {
 			matrizScanner = new Scanner(arquivoMalha);
 			this.qtdLinhas = matrizScanner.nextInt();
@@ -107,6 +108,33 @@ public class Malha {
 			return null;
 		}
 	}
+	
+
+    public Celula getCelulaSaidaMaisProxima(Celula celula) {
+        switch (celula.getTipoCelula()){
+            case TipoCelula.CRUZAMENTO_CIMA_E_DIREITA:
+            case TipoCelula.CRUZAMENTO_DIREITA:
+            case TipoCelula.ESTRADA_CIMA:
+                return getCelulaADireita(celula);
+
+            case TipoCelula.CRUZAMENTO_CIMA_E_ESQUERDA:
+            case TipoCelula.CRUZAMENTO_CIMA:
+            case TipoCelula.ESTRADA_DIREITA:
+                return getCelulaACima(celula);
+
+            case TipoCelula.CRUZAMENTO_DIREITA_E_BAIXO:
+            case TipoCelula.CRUZAMENTO_BAIXO:
+            case TipoCelula.ESTRADA_BAIXO:
+                return getCelulaABaixo(celula);
+
+            case TipoCelula.CRUZAMENTO_BAIXO_E_ESQUERDA:
+            case TipoCelula.CRUZAMENTO_ESQUERDA:
+            case TipoCelula.ESTRADA_ESQUERDA:
+                return getCelulaAEsquerda(celula);
+            default:
+                return null;
+        }
+    }
 	
 	private Celula getCelulaACima(Celula celula){
         return matrizMalha[celula.getLinhaAtual()-1][celula.getColunaAtual()];
