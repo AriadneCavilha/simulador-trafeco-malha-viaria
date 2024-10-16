@@ -7,10 +7,7 @@ import java.util.Scanner;
 import constantes.ClassificacaoCelula;
 import constantes.TipoCelula;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7e01dda (Ajustes cruzamento)
 public class Malha {
 	private static Malha instance;
 	private int qtdLinhas;

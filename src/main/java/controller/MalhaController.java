@@ -13,15 +13,6 @@ import view.SimulacaoView;
 
 public class MalhaController {
 
-<<<<<<< HEAD
-    private List<Carro> carrosEmCirculacao;
-    private SimulacaoView view;
-
-    public MalhaController(SimulacaoView view) {
-        this.carrosEmCirculacao = new ArrayList<>();
-        this.view = view;
-    }
-=======
 	private List<Carro> carrosEmCirculacao;
 	private SimulacaoView view;
 
@@ -29,7 +20,6 @@ public class MalhaController {
 		this.carrosEmCirculacao = new ArrayList<>();
 		this.view = view;
 	}
->>>>>>> 7e01dda (Ajustes cruzamento)
 
 	public void iniciarSimulacao() {
 		ConfiguracoesMalha.getInstance().emExecucao = true;
@@ -51,39 +41,21 @@ public class MalhaController {
 		}
 	}
 
-<<<<<<< HEAD
-    private void AtualizarCelula(int linha, int coluna){
-        Celula celulaAtual = Malha.getInstance().getMatrizMalha()[linha][coluna];
-        if (!celulaAtual.getClassificacao().equals(ClassificacaoCelula.ENTRADA)) // Tem de ser entrada
-            return;
-        if (!celulaAtual.celulaDisponivel()) // Tem de estar disponivel
-            return;
-        if (this.getQtdCarrosCirculacao() == ConfiguracoesMalha.getInstance().getQtdCarrosSimulacao()) // Não pode ultrapassar o limite estabelecido
-            return;
-        try{
-            Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao()));
-            adicionarNovoCarroAMalha(celulaAtual);
-        } catch (Exception e){
-            System.out.println(e.getMessage()+"   -   "+ Arrays.toString(e.getStackTrace()));
-        }
-    }
-=======
 	private void AtualizarCelula(int linha, int coluna) {
 		Celula celulaAtual = Malha.getInstance().getMatrizMalha()[linha][coluna];
 		if (!celulaAtual.getClassificacao().equals(ClassificacaoCelula.ENTRADA)) // Tem de ser entrada
 			return;
-		if (!celulaAtual.celulaDisponivel()) // Tem de estar vazia
+		if (!celulaAtual.celulaDisponivel()) // Tem de estar disponivel
 			return;
 		if (this.getQtdCarrosCirculacao() == ConfiguracoesMalha.getInstance().getQtdCarrosSimulacao()) // Não pode
 			return;
 		try {
-			Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao() * 1000));
+			Thread.sleep((long) (ConfiguracoesMalha.getInstance().getIntervaloInsercao()));
 			adicionarNovoCarroAMalha(celulaAtual);
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + "   -   " + Arrays.toString(e.getStackTrace()));
 		}
 	}
->>>>>>> 7e01dda (Ajustes cruzamento)
 
 	private void adicionarNovoCarroAMalha(Celula celulaInicial) {
 		Carro carro = new Carro(this, celulaInicial);
@@ -103,23 +75,13 @@ public class MalhaController {
 		view.atualizandoIconeDaCelula(celula);
 	}
 
-<<<<<<< HEAD
-    public int getQtdCarrosCirculacao(){
-        return this.carrosEmCirculacao.size();
-    }
-    
-    public void atualizarIconeDaCelula(Celula celulaAtual) {
-    	view.atualizandoIconeDaCelula(celulaAtual);
-    }
+	public void encerrarSimulacao() {
+		view.encerrarSimulacao();
+	}
 
-    public void encerrarSimulacao(){
-        view.encerrarSimulacao();
-    }
-=======
 	public int getQtdCarrosCirculacao() {
 		return this.carrosEmCirculacao.size();
 	}
->>>>>>> 7e01dda (Ajustes cruzamento)
 
 	public void atualizarIconeDaCelula(Celula celulaAtual) {
 		view.atualizandoIconeDaCelula(celulaAtual);
