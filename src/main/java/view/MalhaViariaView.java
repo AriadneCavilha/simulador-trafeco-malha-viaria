@@ -174,33 +174,25 @@ public class MalhaViariaView extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String qtdMaxVeiculosText = textField_1.getText().trim();
-				
-				/*
-				 * Caso o campo esteja vazio impede a execução
-				 */
+
 				if (qtdMaxVeiculosText.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Por favor, insira a quantidade máxima de veículos.");
 					return; 
 				}
-				
 				if(group.getSelection() == null) {
 					JOptionPane.showMessageDialog(null, "Por favor, selecione o mecanismo de exclusão mútua.");
 					return; 
 				}
-
 				String txtExclusaoMutua = getBotaoSelecionado(group);
 				try {
 					int qtdMaxVeiculos = Integer.parseInt(qtdMaxVeiculosText);
 					
-					/*
-					 * Caso a quantidade seja um número negativo impede a execução
-					 */
 					if (qtdMaxVeiculos <= 0) {
 						JOptionPane.showMessageDialog(null,
 								"A quantidade máxima de veículos deve ser um número positivo.");
 						return; 
 					}
-					setQtdMaxVeiculos(qtdMaxVeiculos); // Armazena a quantidade máxima de veículos
+					setQtdMaxVeiculos(qtdMaxVeiculos);
 				} catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null,
 							"Por favor, insira um número válido para a quantidade máxima de veículos.");
@@ -208,7 +200,6 @@ public class MalhaViariaView extends JFrame {
 				}
 				if (arquivoSelecionado != null) {
 					ConfiguracoesMalha.reset();
-					//metodo encadeado
 					ConfiguracoesMalha.getInstance()
 									  .setMalhaAtual(arquivoSelecionado)
 									  .setMecanismoExclusao(txtExclusaoMutua)
