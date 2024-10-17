@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import config.ConfiguracoesMalha;
 import constantes.ClassificacaoCelula;
 import controller.MalhaController;
 
@@ -53,10 +54,6 @@ public class Carro extends Thread {
 				if (!celula.tentarReservar()) {
 					liberarCelulas(celulasReservadas);
 					try {
-						// como tem momentos que 4 carros estão disputando o cruzamento, com
-						// possiveis rotas longas, 400 era muito pouco, talvez seja interessante
-						// calcular uma
-						// nova rota
 						sleep(100 + random.nextInt(1000));
 					} catch (Exception e) {
 						System.out.println(e);
@@ -85,9 +82,6 @@ public class Carro extends Thread {
 		}
 	}
 
-	/*
-	 * Verificar quais são as possíveis saídas
-	 */
 	private List<Celula> obterRotaCruzamento(Celula proximaCelula) {
 		LinkedList<Celula> rotaCruzamento = new LinkedList<Celula>();
 		rotaCruzamento.add(proximaCelula);
@@ -135,13 +129,13 @@ public class Carro extends Thread {
 	private void sairDaMalha() {
 		aguardar();
 		this.finalizado = true;
+		this.malha.removerCarroDaMalha(this);
 	}
 
 	public void aguardar() {
 		try {
 			Thread.sleep(tempoEspera);
 		} catch (InterruptedException ignored) {
-			// Ocorreu tudo OK! Ela foi interrompida
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -153,9 +147,15 @@ public class Carro extends Thread {
 	}
 
 	public void printInformacoes() {
-		System.out.println("Adicionado novo carro. [linha/coluna]" + this.celulaAtual.getLinhaAtual() + "/"
-				+ this.celulaAtual.getColunaAtual() + ". " + this.celulaAtual.getClassificacao() + ". "
-				+ this.tempoEspera + ". Total de carros: " + this.malha.getQtdCarrosCirculacao());
+	    System.out.printf(
+	        "Carro adicionado na posição [%d, %d] - Tipo: %s - Tempo de espera: %dms - Total de carros: %d%n",
+	        this.celulaAtual.getLinhaAtual(),
+	        this.celulaAtual.getColunaAtual(),
+	        this.celulaAtual.getClassificacao(),
+	        this.tempoEspera,
+	        this.malha.getQtdCarrosCirculacao()
+	    );
 	}
+
 
 }

@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import model.ConfiguracoesMalha;
+import config.ConfiguracoesMalha;
 import model.Malha;
 
 public class MalhaViariaView extends JFrame {

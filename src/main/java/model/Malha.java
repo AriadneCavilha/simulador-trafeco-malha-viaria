@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+
+import config.ConfiguracoesMalha;
 import constantes.ClassificacaoCelula;
 import constantes.TipoCelula;
 

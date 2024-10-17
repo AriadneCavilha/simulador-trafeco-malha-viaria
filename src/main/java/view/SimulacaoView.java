@@ -17,11 +17,11 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.table.TableColumnModel;
 
+import config.ConfiguracoesMalha;
 import config.MalhaTableModel;
 import config.MalhaTableModelCellRenderer;
 import controller.MalhaController;
 import model.Celula;
-import model.ConfiguracoesMalha;
 
 public class SimulacaoView extends JFrame {
 
@@ -89,35 +89,12 @@ public class SimulacaoView extends JFrame {
 	}
 	
 	  private void iniciarSimulacao() {
+		  tfVeiculosNaMalha.setText("Veículos na malha: 0");
 	        new Thread(() -> {
 	            malhaController = new MalhaController(this);
 	            malhaController.iniciarSimulacao();
 	        }).start();
 	    }
-
-//	private void loadTableModel() {
-//	    this.tabelaMalha = new JTable();
-//	    tabelaMalha.setModel(new MalhaTableModel());
-//	    tabelaMalha.setRowHeight(32);
-//	    tabelaMalha.setDefaultRenderer(Object.class, new MalhaTableModelCellRenderer());
-//
-//	    tabelaMalha.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//	    TableColumnModel columnModel = tabelaMalha.getColumnModel();
-//	    for (int i = 0; i < columnModel.getColumnCount(); i++) {
-//	        columnModel.getColumn(i).setMaxWidth(40);
-//	    }
-//
-//	    tabelaMalha.setPreferredScrollableViewportSize(tabelaMalha.getPreferredSize());
-//
-//	    // Removendo o JScrollPane para evitar scroll
-//	    JPanel centralPanel = new JPanel(new GridBagLayout());
-//	    centralPanel.add(tabelaMalha);
-//
-//	    painelPrincipal.setLayout(new BorderLayout());
-//	    painelPrincipal.add(centralPanel, BorderLayout.CENTER);
-//
-//	    tabelaMalha.revalidate();
-//	}
 	
 	private void loadTableModel() {
 	    this.tabelaMalha = new JTable();
@@ -177,6 +154,8 @@ public class SimulacaoView extends JFrame {
 
 	public void atualizandoCarrosNaMalha(int qtdCarrosMalha) {
 		tfVeiculosNaMalha.setText("Veículos na malha: " + qtdCarrosMalha);
+	    tfVeiculosNaMalha.revalidate();
+	    tfVeiculosNaMalha.repaint();
 	}
 
 	public void atualizandoIconeDaCelula(Celula celula) {

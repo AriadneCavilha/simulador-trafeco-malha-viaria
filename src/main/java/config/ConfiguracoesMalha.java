@@ -1,4 +1,4 @@
-package model;
+package config;
 
 import java.io.File;
 

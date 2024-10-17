@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import config.ConfiguracoesMalha;
 import constantes.ClassificacaoCelula;
 import constantes.TipoCelula;
 
@@ -14,7 +15,7 @@ public class Celula {
 	private int linhaAtual;
 	private int qtdLinhas;
 	private int qtdColunas;
-	private String classificacao; // ENTRADA/SAÍDA/VAZIO/ESTRADA/CRUZAMENTO
+	private String classificacao; 
 	private int ultimaLinhaDaMalha;
 	private int ultimaColunaDaMalha;
 	private int tipoCelula;
